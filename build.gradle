@@ -1,0 +1,64 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+buildscript {
+    ext {
+        springBootVersion = '1.5.7.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'http://repo.spring.io/milestone' }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+    }
+
+}
+
+
+
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE'
+    }
+}
+
+jar {
+    baseName = 'users'
+    version = '0.0.1-SNAPSHOT'
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+
+dependencies {
+    compile 'org.springframework.cloud:spring-cloud-stream:1.0.3.RELEASE'
+    compile('org.springframework.cloud:spring-cloud-starter-stream-kafka:1.0.3.RELEASE') {
+    }
+   compile('org.springframework.cloud:spring-cloud-stream-binder-kafka:1.0.3.RELEASE') {
+   		exclude group: 'log4j', module: 'log4j'
+    	exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+   }
+  
+}
+configurations.all {
+  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    if (details.requested.name == 'log4j') {
+      details.useTarget 'log4j:log4j:1.2.+'
+    }
+     if (details.requested.name == 'org.springframework.retry') {
+     	//details.userTarget 'org.springframework.retry:spring-retry:1.2+'
+     }
+  }
+  }
