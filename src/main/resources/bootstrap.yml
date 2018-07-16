@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    active: dev
+  cloud:
+    config:
+      name: config-jdbc-server
+      uri: http://localhost:9081  
